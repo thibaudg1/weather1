@@ -14,18 +14,25 @@ class ViewController: UIViewController {
     @IBOutlet var icon: UIImageView!
     @IBOutlet var temperature: UILabel!
     
+    @IBOutlet var userLocationButton: UIButton!
+    
     private let weatherAPI = OpenWeatherAPIService()
     private let locationService = DeviceLocationService()
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
         displayRigaCurrentWeather()
+        //displayCurrentLocationWeather()
         
         background.layer.opacity = 0.85
     }
-
+    
+    @IBAction func currentLocationTapped(_ sender: Any) {
+        displayCurrentLocationWeather()
+    }
 
 }
 
