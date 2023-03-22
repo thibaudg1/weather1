@@ -66,7 +66,8 @@ extension ViewController {
                 let weather = Weather(city: currentWeather.cityName,
                                       temperature: measurementFormatter.string(from: tempCelsius),
                                       description: currentWeather.weather.first!.description,
-                                      icon: currentWeather.weather.first!.icon)
+                                      icon: currentWeather.weather.first!.icon,
+                                      group: currentWeather.weather.first!.id)
                 
                 DispatchQueue.main.async { [weak self] in
                     self?.updateDisplayWith(weather)
@@ -86,6 +87,7 @@ extension ViewController {
         self.temperature.text = weather.temperature
         self.city.text = weather.city
         self.descriptionLabel.text = weather.description
+        self.background.image = UIImage(named: weather.background)
         
         weatherAPI.fecthWeatherIcon(named: weather.icon) { imageResult in
             var uiImage: UIImage?

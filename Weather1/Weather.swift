@@ -11,6 +11,7 @@ struct Weather {
     let temperature: String
     let description: String
     let icon: String
+    let group: Int
     
     enum Icon: String {
         case clearDay = "clear-day"
@@ -47,6 +48,19 @@ struct Weather {
             case .partlyCloudyNight:
                 return UIImage(systemName: "cloud.moon")
             }
+        }
+    }
+    
+    var background: String {
+        // Photos by authors on Unsplash
+        switch group {
+        case 200...299 : return "thunderstorm"
+        case 300...399: return "drizzle"
+        case 500...599: return "rain"
+        case 600...699: return "snow"
+        case 700...799: return "mist"
+        case 800: return "sun"
+        default: return "clouds"
         }
     }
 }
