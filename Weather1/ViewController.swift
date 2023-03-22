@@ -66,7 +66,7 @@ extension ViewController {
                 let weather = Weather(city: currentWeather.cityName,
                                       temperature: measurementFormatter.string(from: tempCelsius),
                                       description: currentWeather.weather.first!.description,
-                                      icon: Weather.Icon.fog)
+                                      icon: currentWeather.weather.first!.icon)
                 
                 DispatchQueue.main.async { [weak self] in
                     self?.updateDisplayWith(weather)
@@ -82,10 +82,26 @@ extension ViewController {
     }
     
     func updateDisplayWith(_ weather: Weather) {
-        self.icon.image = weather.icon.image
+        
         self.temperature.text = weather.temperature
         self.city.text = weather.city
         self.descriptionLabel.text = weather.description
+        
+        weatherAPI.fecthWeatherIcon(named: weather.icon) { imageResult in
+            var uiImage: UIImage?
+            
+            switch imageResult {
+            case .failure(let error):
+                print("Error when fetching icon \(weather.icon): \(error)")
+                return
+            case .success(let imageData):
+                uiImage = UIImage(data: imageData)
+            }
+            
+            DispatchQueue.main.async {
+                self.icon.image = uiImage
+            }
+        }
     }
 }
 

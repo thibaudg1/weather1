@@ -24,6 +24,7 @@
 		6C04DE8629CB0F5D00BB6A95 /* APIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIService.swift; sourceTree = "<group>"; };
 		6C04DE8829CB221300BB6A95 /* Weather.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Weather.swift; sourceTree = "<group>"; };
 		6C04DE8B29CB345C00BB6A95 /* LocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
+		6C04DE8D29CB59C900BB6A95 /* Valencia, Spain.gpx */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "Valencia, Spain.gpx"; sourceTree = "<group>"; };
 		6C258F6229CAF8FD002ADBC5 /* Weather1.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Weather1.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6C258F6529CAF8FE002ADBC5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		6C258F6729CAF8FE002ADBC5 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -58,6 +59,7 @@
 			isa = PBXGroup;
 			children = (
 				6C04DE8B29CB345C00BB6A95 /* LocationService.swift */,
+				6C04DE8D29CB59C900BB6A95 /* Valencia, Spain.gpx */,
 			);
 			path = LocationService;
 			sourceTree = "<group>";

@@ -7,6 +7,8 @@ import Foundation
 
 typealias Coordinate = (latitude: Double, longitude: Double)
 typealias WeatherForecastCompletionBlock = (Result<CurrentWeatherResponse, APIServiceError>) -> Void
+typealias ImageData = Data
+typealias IconCompletionBlock = (Result<ImageData, APIServiceError>) -> Void
 
 protocol APIService {
     func fetchCurrentWeather(coordinate: Coordinate,
@@ -70,6 +72,34 @@ final class OpenWeatherAPIService: APIService {
             }
         }.resume()
     }
+    
+    func fecthWeatherIcon(named iconName: String, completionHandler: @escaping IconCompletionBlock) {
+        guard let url = iconUrlFor(iconName) else {
+            completionHandler(.failure(.invalidURL))
+            return
+        }
+        
+#if DEBUG
+        print(url)
+#endif
+        
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            guard let data = data,
+                  let response = response as? HTTPURLResponse,
+                  error == nil else {
+                completionHandler(.failure(.emptyDataOrError))
+                return
+            }
+            
+            guard 200 ..< 300 ~= response.statusCode else {
+                completionHandler(.failure(.unexpectedStatusCode(response.statusCode)))
+                return
+            }
+            
+            completionHandler(.success(data))
+
+        }.resume()
+    }
 }
 
 private extension OpenWeatherAPIService {
@@ -91,5 +121,12 @@ private extension OpenWeatherAPIService {
         }
         
         return completeUrl
+    }
+    
+    func iconUrlFor(_ icon: String) -> URL? {
+        let str = "https://openweathermap.org/img/wn/"
+                    .appending(icon)
+                    .appending("@2x.png")        
+        return URL(string: str)
     }
 }

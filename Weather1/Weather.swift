@@ -10,7 +10,7 @@ struct Weather {
     let city: String
     let temperature: String
     let description: String
-    let icon: Icon    
+    let icon: String
     
     enum Icon: String {
         case clearDay = "clear-day"
