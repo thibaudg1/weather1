@@ -72,6 +72,7 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="Pth-mt-Lf6">
+                        <nil key="title"/>
                         <barButtonItem key="leftBarButtonItem" style="done" id="REO-eZ-3wQ">
                             <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="h48-wK-TWD">
                                 <rect key="frame" x="16" y="4.6666666666666679" width="50" height="35"/>

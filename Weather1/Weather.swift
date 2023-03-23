@@ -8,7 +8,7 @@ import UIKit
 
 struct Weather {
     let city: String
-    let temperature: String
+    let temperature: Double
     let description: String
     let icon: String
     let group: Int
@@ -63,4 +63,31 @@ struct Weather {
         default: return "clouds"
         }
     }
+}
+
+// MARK: - Temperature formatting
+extension Weather {
+    static let temperatureFormatter: MeasurementFormatter = {
+        let measurementFormatter = MeasurementFormatter()
+        measurementFormatter.unitOptions = .providedUnit
+        measurementFormatter.numberFormatter.maximumFractionDigits = 1
+        return measurementFormatter
+    }()
+    
+    var tempCelsius: String {
+        let measurement = Measurement(value: temperature, unit: UnitTemperature.kelvin)
+        let tempCelsius = measurement.converted(to: .celsius)
+        return Weather.temperatureFormatter.string(from: tempCelsius)
+    }
+    
+    var tempFahrenheit: String {
+        let measurement = Measurement(value: temperature, unit: UnitTemperature.kelvin)
+        let tempFahrenheit = measurement.converted(to: .fahrenheit)
+        return Weather.temperatureFormatter.string(from: tempFahrenheit)
+    }
+}
+
+enum TemperatureUnit {
+    case celsius
+    case fahrenheit
 }

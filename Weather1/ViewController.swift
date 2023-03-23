@@ -21,10 +21,21 @@ class ViewController: UIViewController {
     private let weatherAPI = OpenWeatherAPIService()
     private let locationService = DeviceLocationService()
     
+    private var currentWeather: Weather?
+    private var temperatureUnit: TemperatureUnit = .fahrenheit {
+        didSet {
+            if temperatureUnit == .celsius {
+                temperature.text = currentWeather?.tempCelsius
+            } else {
+                temperature.text = currentWeather?.tempFahrenheit
+            }
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        setupTempLabelTap()
         configureSearchController()
         
         //displayRigaCurrentWeather()
@@ -42,6 +53,16 @@ class ViewController: UIViewController {
     
     @IBAction func currentLocationTapped(_ sender: Any) {
         displayCurrentLocationWeather()
+    }
+    
+    @objc func temperatureTapped(_ sender: UITapGestureRecognizer) {
+        temperatureUnit = (temperatureUnit == .celsius ? .fahrenheit : .celsius)
+    }
+    
+    func setupTempLabelTap() {
+        let tapGR = UITapGestureRecognizer(target: self, action: #selector(self.temperatureTapped(_:)))
+        self.temperature.isUserInteractionEnabled = true
+        self.temperature.addGestureRecognizer(tapGR)
     }
     
     func configureSearchController() {
@@ -78,19 +99,8 @@ extension ViewController {
                 print(error)
                 
             case .success(let currentWeather):
-                let measurementFormatter = MeasurementFormatter()
-                //measurementFormatter.unitOptions = .providedUnit
-                measurementFormatter.numberFormatter.maximumFractionDigits = 1
-                
-                let measurement = Measurement(
-                    value: currentWeather.main.temperature,
-                    unit: UnitTemperature.kelvin
-                )
-                
-                let tempCelsius = measurement.converted(to: .celsius)
-                
                 let weather = Weather(city: currentWeather.cityName,
-                                      temperature: measurementFormatter.string(from: tempCelsius),
+                                      temperature: currentWeather.main.temperature,
                                       description: currentWeather.weather.first!.description,
                                       icon: currentWeather.weather.first!.icon,
                                       group: currentWeather.weather.first!.id)
@@ -109,8 +119,9 @@ extension ViewController {
     }
     
     func updateDisplayWith(_ weather: Weather) {
+        currentWeather = weather
         
-        self.temperature.text = weather.temperature
+        self.temperature.text = (temperatureUnit == .celsius ? weather.tempCelsius : weather.tempFahrenheit)
         self.city.text = weather.city
         self.descriptionLabel.text = weather.description
         self.background.image = UIImage(named: weather.background)
