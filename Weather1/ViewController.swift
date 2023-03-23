@@ -23,6 +23,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        configureSearchController()
         
         displayRigaCurrentWeather()
         //displayCurrentLocationWeather()
@@ -30,10 +31,27 @@ class ViewController: UIViewController {
         background.layer.opacity = 0.85
     }
     
+    @IBAction func searchButton(_ sender: Any) {
+        navigationItem.searchController?.searchBar.isHidden = false
+        //navigationItem.searchController?.isActive = true
+        navigationItem.searchController?.searchBar.becomeFirstResponder()
+    }
+    
     @IBAction func currentLocationTapped(_ sender: Any) {
         displayCurrentLocationWeather()
     }
-
+    
+    func configureSearchController() {
+        let searchController = UISearchController(searchResultsController: nil)
+        searchController.searchResultsUpdater = self
+        searchController.delegate = self
+        //search.hidesNavigationBarDuringPresentation = false
+        searchController.obscuresBackgroundDuringPresentation = true
+        searchController.searchBar.placeholder = "Type something here to search"
+        searchController.searchBar.isHidden = true
+        navigationItem.searchController = searchController
+        definesPresentationContext = true
+    }
 }
 
 extension ViewController {
@@ -107,6 +125,7 @@ extension ViewController {
     }
 }
 
+// MARK: - LocationServiceDelegate
 extension ViewController: LocationServiceDelegate {
     func locationServiceDidUpdate(_ location: CLLocation) {
         let coordinate: Coordinate = (location.coordinate.latitude,
@@ -117,5 +136,20 @@ extension ViewController: LocationServiceDelegate {
     
     func locationService(failedWithError error: LocationServiceError) {
         print(error.description)
+    }
+}
+
+// MARK: - UISearchResultsUpdating Delegate
+extension ViewController: UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
+        guard let text = searchController.searchBar.text else { return }
+        print("Last typed: >\(text)<")
+    }
+}
+
+// MARK: - UISearchControllerDelegate
+extension ViewController: UISearchControllerDelegate {
+    func didDismissSearchController(_ searchController: UISearchController) {
+        searchController.searchBar.isHidden = true
     }
 }
