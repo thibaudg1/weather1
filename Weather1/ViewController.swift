@@ -16,6 +16,8 @@ class ViewController: UIViewController {
     
     @IBOutlet var userLocationButton: UIButton!
     
+    private var resultsTableViewController: ResultsTableViewController!
+    
     private let weatherAPI = OpenWeatherAPIService()
     private let locationService = DeviceLocationService()
     
@@ -25,13 +27,14 @@ class ViewController: UIViewController {
         // Do any additional setup after loading the view.
         configureSearchController()
         
-        displayRigaCurrentWeather()
+        //displayRigaCurrentWeather()
         //displayCurrentLocationWeather()
         
         background.layer.opacity = 0.85
     }
     
     @IBAction func searchButton(_ sender: Any) {
+        resultsTableViewController.results = nil
         navigationItem.searchController?.searchBar.isHidden = false
         //navigationItem.searchController?.isActive = true
         navigationItem.searchController?.searchBar.becomeFirstResponder()
@@ -42,12 +45,17 @@ class ViewController: UIViewController {
     }
     
     func configureSearchController() {
-        let searchController = UISearchController(searchResultsController: nil)
+        resultsTableViewController = storyboard!.instantiateViewController(withIdentifier: "resultsViewController") as? ResultsTableViewController
+        
+        resultsTableViewController.delegate = self
+        
+        let searchController = UISearchController(searchResultsController: resultsTableViewController)
+        searchController.showsSearchResultsController = true
         searchController.searchResultsUpdater = self
         searchController.delegate = self
         //search.hidesNavigationBarDuringPresentation = false
         searchController.obscuresBackgroundDuringPresentation = true
-        searchController.searchBar.placeholder = "Type something here to search"
+        searchController.searchBar.placeholder = "Type a city, state and country"
         searchController.searchBar.isHidden = true
         navigationItem.searchController = searchController
         definesPresentationContext = true
@@ -142,8 +150,22 @@ extension ViewController: LocationServiceDelegate {
 // MARK: - UISearchResultsUpdating Delegate
 extension ViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
-        guard let text = searchController.searchBar.text else { return }
-        print("Last typed: >\(text)<")
+        guard let text = searchController.searchBar.text,
+              !text.isEmpty  else { return }
+        
+        print("User typed: >\(text)<")
+        
+        weatherAPI.fetchGeocodedCities(search: text) { [weak self] cityResult in
+            switch cityResult {
+            case .failure(let error):
+                print(error)
+            case .success(let cities):
+                guard !cities.isEmpty else { return }
+                DispatchQueue.main.async {
+                    self?.resultsTableViewController.results = cities
+                }                
+            }
+        }
     }
 }
 
@@ -151,5 +173,15 @@ extension ViewController: UISearchResultsUpdating {
 extension ViewController: UISearchControllerDelegate {
     func didDismissSearchController(_ searchController: UISearchController) {
         searchController.searchBar.isHidden = true
+    }
+}
+
+// MARK: - ResultsTableViewDelegate
+extension ViewController: ResultsTableViewDelegate {
+    func didSelect(city: City) {
+        let coordinate = (city.latitude, city.longitude)
+        fetchCurrentWeather(coordinate: coordinate)
+        print("User selected city: \(city)")
+        navigationItem.searchController?.isActive = false
     }
 }
