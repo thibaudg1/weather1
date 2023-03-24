@@ -40,8 +40,6 @@ class ViewController: UIViewController {
         
         //displayRigaCurrentWeather()
         //displayCurrentLocationWeather()
-        
-        background.layer.opacity = 0.85
     }
     
     @IBAction func searchButton(_ sender: Any) {
