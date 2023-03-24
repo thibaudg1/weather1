@@ -21,13 +21,13 @@ class ViewController: UIViewController {
     private let weatherAPI = OpenWeatherAPIService()
     private let locationService = DeviceLocationService()
     
-    private var currentWeather: Weather?
+    private var currentWeather: Weather = .default
     private var temperatureUnit: TemperatureUnit = .celsius {
         didSet {
             if temperatureUnit == .celsius {
-                temperature.text = currentWeather?.tempCelsius
+                temperature.text = currentWeather.tempCelsius
             } else {
-                temperature.text = currentWeather?.tempFahrenheit
+                temperature.text = currentWeather.tempFahrenheit
             }
         }
     }
@@ -37,7 +37,7 @@ class ViewController: UIViewController {
         // Do any additional setup after loading the view.
         setupTempLabelTap()
         configureSearchController()
-        
+        updateDisplayWith(currentWeather)
         //displayRigaCurrentWeather()
         //displayCurrentLocationWeather()
     }

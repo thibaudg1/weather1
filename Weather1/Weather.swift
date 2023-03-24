@@ -67,6 +67,8 @@ struct Weather {
 
 // MARK: - Temperature formatting
 extension Weather {
+    static let `default` = Weather(city: "Rīga", temperature: 300, description: "Clear sky", icon: "01d", group: 800)
+    
     static let temperatureFormatter: MeasurementFormatter = {
         let measurementFormatter = MeasurementFormatter()
         measurementFormatter.unitOptions = .providedUnit
