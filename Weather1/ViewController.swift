@@ -22,7 +22,7 @@ class ViewController: UIViewController {
     private let locationService = DeviceLocationService()
     
     private var currentWeather: Weather?
-    private var temperatureUnit: TemperatureUnit = .fahrenheit {
+    private var temperatureUnit: TemperatureUnit = .celsius {
         didSet {
             if temperatureUnit == .celsius {
                 temperature.text = currentWeather?.tempCelsius
@@ -46,9 +46,10 @@ class ViewController: UIViewController {
     
     @IBAction func searchButton(_ sender: Any) {
         resultsTableViewController.results = nil
-        navigationItem.searchController?.searchBar.isHidden = false
-        //navigationItem.searchController?.isActive = true
+        
+        navigationItem.searchController?.isActive = true
         navigationItem.searchController?.searchBar.becomeFirstResponder()
+        navigationItem.searchController?.searchBar.isHidden = false
     }
     
     @IBAction func currentLocationTapped(_ sender: Any) {
@@ -182,7 +183,7 @@ extension ViewController: UISearchResultsUpdating {
 
 // MARK: - UISearchControllerDelegate
 extension ViewController: UISearchControllerDelegate {
-    func didDismissSearchController(_ searchController: UISearchController) {
+    func willDismissSearchController(_ searchController: UISearchController) {
         searchController.searchBar.isHidden = true
     }
 }

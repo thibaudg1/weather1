@@ -28,6 +28,23 @@ class ResultsTableViewController: UITableViewController {
         super.viewDidLoad()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        configureBlurView()
+        super.viewWillAppear(animated)
+    }
+    
+    func configureBlurView() {
+        if UIAccessibility.isReduceTransparencyEnabled {
+            tableView.backgroundColor = .systemBackground
+            tableView.backgroundView = nil
+        } else {
+            tableView.backgroundColor = UIColor.clear
+            let blurEffect = UIBlurEffect(style: .light)
+            let blurEffectView = UIVisualEffectView(effect: blurEffect)
+            tableView.backgroundView = blurEffectView
+        }
+    }
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         isShowingResults ? (results?.count ?? 0) : suggestions.count
     }

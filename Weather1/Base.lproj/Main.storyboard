@@ -166,7 +166,7 @@
                                                                 <constraint firstAttribute="height" constant="16.5" id="2tM-3W-vmx"/>
                                                             </constraints>
                                                             <fontDescription key="fontDescription" type="system" pointSize="11"/>
-                                                            <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                            <color key="textColor" systemColor="secondaryLabelColor"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
                                                     </subviews>
@@ -186,6 +186,7 @@
                                         <constraint firstItem="vVV-cp-dvz" firstAttribute="leading" secondItem="lZy-aZ-DoR" secondAttribute="leadingMargin" constant="9" id="Y0s-XL-1w4"/>
                                     </constraints>
                                 </tableViewCellContentView>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <connections>
                                     <outlet property="cityLabel" destination="tGa-yK-aM8" id="AJh-Sa-9Dn"/>
                                     <outlet property="countryLabel" destination="ieO-JA-q4j" id="auh-dt-V2l"/>
@@ -211,6 +212,9 @@
         <image name="sun.max" catalog="system" width="128" height="125"/>
         <systemColor name="labelColor">
             <color red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="secondaryLabelColor">
+            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
