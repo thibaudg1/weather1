@@ -20,6 +20,7 @@
 		6CAA53B829CC539100F625E4 /* ResultsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CAA53B729CC539100F625E4 /* ResultsTableViewController.swift */; };
 		6CAA53BA29CC556E00F625E4 /* CityCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CAA53B929CC556E00F625E4 /* CityCell.swift */; };
 		6CAA53BC29CC55AE00F625E4 /* City.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CAA53BB29CC55AE00F625E4 /* City.swift */; };
+		6CAE9B6529CE1D6F008D96E5 /* ResultPublisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CAE9B6429CE1D6F008D96E5 /* ResultPublisher.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -39,6 +40,7 @@
 		6CAA53B729CC539100F625E4 /* ResultsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultsTableViewController.swift; sourceTree = "<group>"; };
 		6CAA53B929CC556E00F625E4 /* CityCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CityCell.swift; sourceTree = "<group>"; };
 		6CAA53BB29CC55AE00F625E4 /* City.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = City.swift; sourceTree = "<group>"; };
+		6CAE9B6429CE1D6F008D96E5 /* ResultPublisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultPublisher.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,10 +102,19 @@
 				6C258F6E29CAF8FF002ADBC5 /* Assets.xcassets */,
 				6C258F7029CAF8FF002ADBC5 /* LaunchScreen.storyboard */,
 				6C258F7329CAF8FF002ADBC5 /* Info.plist */,
+				6CAE9B6329CE1D42008D96E5 /* Extensions */,
 				6C04DE8A29CB33B700BB6A95 /* LocationService */,
 				6C04DE8329CB069800BB6A95 /* OpenWeatherAPI */,
 			);
 			path = Weather1;
+			sourceTree = "<group>";
+		};
+		6CAE9B6329CE1D42008D96E5 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				6CAE9B6429CE1D6F008D96E5 /* ResultPublisher.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -186,6 +197,7 @@
 				6CAA53BC29CC55AE00F625E4 /* City.swift in Sources */,
 				6C04DE8929CB221300BB6A95 /* Weather.swift in Sources */,
 				6C04DE8529CB08E100BB6A95 /* APIModels.swift in Sources */,
+				6CAE9B6529CE1D6F008D96E5 /* ResultPublisher.swift in Sources */,
 				6CAA53BA29CC556E00F625E4 /* CityCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

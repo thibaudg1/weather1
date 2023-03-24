@@ -4,6 +4,7 @@
 //
 
 import Foundation
+import Combine
 
 typealias Coordinate = (latitude: Double, longitude: Double)
 typealias WeatherForecastCompletionBlock = (Result<CurrentWeatherResponse, APIServiceError>) -> Void
@@ -16,6 +17,8 @@ protocol APIService {
                              completionHandler: @escaping WeatherForecastCompletionBlock)
     func fetchGeocodedCities(search: String,
                              completionHandler: @escaping CityResultsCompletionBlock)
+    
+    func fetchCityResults(forQuery query: String) -> AnyPublisher<[City], APIServiceError>
 }
 
 enum APIServiceError: Error {
@@ -74,6 +77,41 @@ final class OpenWeatherAPIService: APIService {
                 completionHandler(.failure(.unableToParseDataWith(error: error)))
             }
         }.resume()
+    }
+    
+    func fetchCityResults(forQuery query: String) -> AnyPublisher<[City], APIServiceError> {
+        guard let url = cityResultsUrlFor(query) else {
+            return Fail(error: APIServiceError.invalidURL).eraseToAnyPublisher()
+        }
+        
+#if DEBUG
+        print(url)
+#endif
+        
+        let publisher = URLSession.shared.dataTaskPublisher(for: url)
+        return publisher
+            .tryMap { (data, urlResponse) in
+                guard let response = urlResponse as? HTTPURLResponse else {
+                    throw APIServiceError.emptyDataOrError
+                }
+                guard 200 ..< 300 ~= response.statusCode else {
+                    throw APIServiceError.unexpectedStatusCode(response.statusCode)
+                }
+                
+                return data
+            }
+            .decode(type: [City].self, decoder: JSONDecoder())
+            .mapError { error -> APIServiceError in
+                switch error {
+                case let apiError as APIServiceError:
+                    return apiError
+                case is Swift.DecodingError:
+                    return APIServiceError.unableToParseDataWith(error: error)
+                default:
+                    return APIServiceError.emptyDataOrError
+                }
+            }
+            .eraseToAnyPublisher()
     }
     
     func fetchGeocodedCities(search: String,
@@ -170,7 +208,7 @@ private extension OpenWeatherAPIService {
         var components = URLComponents(url: url, resolvingAgainstBaseURL: true)
         components?.queryItems = [
             .init(name: "q", value: city),
-            .init(name: "limit", value: "1"),
+            .init(name: "limit", value: "5"),
             .init(name: "appid", value: apiKey)
         ]
         

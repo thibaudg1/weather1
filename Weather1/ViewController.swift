@@ -5,15 +5,14 @@
 
 import UIKit
 import CoreLocation
+import Combine
 
 class ViewController: UIViewController {
-
     @IBOutlet var descriptionLabel: UILabel!
     @IBOutlet var background: UIImageView!
     @IBOutlet var city: UILabel!
     @IBOutlet var icon: UIImageView!
     @IBOutlet var temperature: UILabel!
-    
     @IBOutlet var userLocationButton: UIButton!
     
     private var resultsTableViewController: ResultsTableViewController!
@@ -32,11 +31,15 @@ class ViewController: UIViewController {
         }
     }
     
+    private var query = PassthroughSubject<String, Never>()
+    private var cancellable: AnyCancellable?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+
         setupTempLabelTap()
         configureSearchController()
+        configureCitySearch()
         updateDisplayWith(currentWeather)
         //displayRigaCurrentWeather()
         //displayCurrentLocationWeather()
@@ -161,21 +164,36 @@ extension ViewController: LocationServiceDelegate {
 extension ViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         guard let text = searchController.searchBar.text,
-              !text.isEmpty  else { return }
+              !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty  else { return }
         
         print("User typed: >\(text)<")
-        
-        weatherAPI.fetchGeocodedCities(search: text) { [weak self] cityResult in
-            switch cityResult {
-            case .failure(let error):
-                print(error)
-            case .success(let cities):
-                guard !cities.isEmpty else { return }
-                DispatchQueue.main.async {
-                    self?.resultsTableViewController.results = cities
-                }                
+        query.send(text.trimmingCharacters(in: .whitespacesAndNewlines))
+    }
+    
+    func configureCitySearch() {
+        cancellable = query
+            .debounce(for: 1, scheduler: DispatchQueue.main)
+            .removeDuplicates()
+            .map { [weatherAPI] query in
+                weatherAPI.fetchCityResults(forQuery: query)
+                    .asResult()
             }
-        }
+            .switchToLatest()
+            .map { result -> [City] in
+                switch result {
+                case .success(let cities):
+                    print("\(cities.count) city results")
+                    return cities
+                case .failure(let error):
+                    print(error)
+                    return []
+                }
+            }
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] cities in
+                guard !cities.isEmpty else { return }
+                self?.resultsTableViewController.results = cities
+            }
     }
 }
 
