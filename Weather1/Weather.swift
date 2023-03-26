@@ -91,9 +91,15 @@ extension Weather {
 
 // MARK: - Temperature formatting
 extension Weather {
-    static let temperatureFormatter: MeasurementFormatter = {
+    static let forcedFormatter: MeasurementFormatter = {
         let measurementFormatter = MeasurementFormatter()
         measurementFormatter.unitOptions = .providedUnit
+        measurementFormatter.numberFormatter.maximumFractionDigits = 1
+        return measurementFormatter
+    }()
+    
+    static let localeFormatter: MeasurementFormatter = {
+        let measurementFormatter = MeasurementFormatter()
         measurementFormatter.numberFormatter.maximumFractionDigits = 1
         return measurementFormatter
     }()
@@ -101,13 +107,18 @@ extension Weather {
     var tempCelsius: String {
         let measurement = Measurement(value: current.temperature, unit: UnitTemperature.kelvin)
         let tempCelsius = measurement.converted(to: .celsius)
-        return Weather.temperatureFormatter.string(from: tempCelsius)
+        return Weather.forcedFormatter.string(from: tempCelsius)
     }
     
     var tempFahrenheit: String {
         let measurement = Measurement(value: current.temperature, unit: UnitTemperature.kelvin)
         let tempFahrenheit = measurement.converted(to: .fahrenheit)
-        return Weather.temperatureFormatter.string(from: tempFahrenheit)
+        return Weather.forcedFormatter.string(from: tempFahrenheit)
+    }
+    
+    var tempLocale: String {
+        let measurement = Measurement(value: current.temperature, unit: UnitTemperature.kelvin)
+        return Weather.localeFormatter.string(from: measurement)
     }
 }
 

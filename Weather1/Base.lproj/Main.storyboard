@@ -82,11 +82,13 @@
                         <nil key="title"/>
                         <barButtonItem key="leftBarButtonItem" style="done" id="REO-eZ-3wQ">
                             <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="h48-wK-TWD">
-                                <rect key="frame" x="16" y="4.6666666666666679" width="50" height="35"/>
+                                <rect key="frame" x="16.000000000000004" y="3.3333333333333321" width="54.333333333333343" height="37.666666666666671"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <buttonConfiguration key="configuration" style="plain">
                                     <imageReference key="image" image="location.circle.fill" catalog="system" symbolScale="large"/>
-                                    <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage"/>
+                                    <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" configurationType="font">
+                                        <fontDescription key="fontDescription" style="UICTFontTextStyleTitle3"/>
+                                    </preferredSymbolConfiguration>
                                     <color key="baseForegroundColor" systemColor="labelColor"/>
                                 </buttonConfiguration>
                                 <connections>
@@ -94,12 +96,37 @@
                                 </connections>
                             </button>
                         </barButtonItem>
+                        <button key="titleView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="QIR-zJ-JNb">
+                            <rect key="frame" x="174.66666666666666" y="3.3333333333333321" width="43.666666666666657" height="37.666666666666671"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                            <state key="normal" title="Button">
+                                <color key="titleColor" systemColor="labelColor"/>
+                                <imageReference key="image" image="thermometer.medium" catalog="system" symbolScale="large"/>
+                                <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="font">
+                                    <fontDescription key="fontDescription" style="UICTFontTextStyleTitle3"/>
+                                </preferredSymbolConfiguration>
+                            </state>
+                            <buttonConfiguration key="configuration" style="plain">
+                                <imageReference key="image" image="thermometer.medium" catalog="system" symbolScale="large"/>
+                                <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" configurationType="font">
+                                    <fontDescription key="fontDescription" style="UICTFontTextStyleTitle3"/>
+                                </preferredSymbolConfiguration>
+                                <color key="baseForegroundColor" systemColor="labelColor"/>
+                            </buttonConfiguration>
+                            <connections>
+                                <action selector="temperatureButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="16V-I9-I5U"/>
+                            </connections>
+                        </button>
                         <barButtonItem key="rightBarButtonItem" style="done" id="Jrc-qp-eq2">
                             <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" id="BZa-9k-OpX">
-                                <rect key="frame" x="327" y="4.6666666666666679" width="50" height="35"/>
+                                <rect key="frame" x="322.66666666666669" y="3.3333333333333321" width="54.333333333333314" height="37.666666666666671"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="plain" image="magnifyingglass.circle.fill" catalog="system">
+                                    <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" configurationType="font">
+                                        <fontDescription key="fontDescription" style="UICTFontTextStyleTitle3"/>
+                                    </preferredSymbolConfiguration>
                                     <color key="baseForegroundColor" systemColor="labelColor"/>
                                 </buttonConfiguration>
                                 <connections>
@@ -113,6 +140,7 @@
                         <outlet property="city" destination="q4u-Ue-tHx" id="OlK-07-yem"/>
                         <outlet property="descriptionLabel" destination="enl-Yp-zqN" id="V5p-kR-NH5"/>
                         <outlet property="icon" destination="PHf-SY-Bi9" id="Wyd-K6-8vR"/>
+                        <outlet property="tempButton" destination="QIR-zJ-JNb" id="Kw0-R6-xds"/>
                         <outlet property="temperature" destination="v8Y-Sp-yX1" id="tUb-DK-U7U"/>
                         <outlet property="userLocationButton" destination="h48-wK-TWD" id="xDG-kq-oua"/>
                     </connections>
@@ -218,6 +246,7 @@
         <image name="magnifyingglass.circle.fill" catalog="system" width="128" height="123"/>
         <image name="sun" width="640" height="960"/>
         <image name="sun.max" catalog="system" width="128" height="125"/>
+        <image name="thermometer.medium" catalog="system" width="80" height="128"/>
         <systemColor name="labelColor">
             <color red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>

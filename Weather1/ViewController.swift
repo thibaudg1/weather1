@@ -9,6 +9,7 @@ import Combine
 
 class ViewController: UIViewController {
     @IBOutlet var descriptionLabel: UILabel!
+    @IBOutlet var tempButton: UIButton!
     @IBOutlet var background: UIImageView!
     @IBOutlet var city: UILabel!
     @IBOutlet var icon: UIImageView!
@@ -21,7 +22,7 @@ class ViewController: UIViewController {
     private let locationService = DeviceLocationService()
     
     private var currentWeather: Weather = .riga
-    private var temperatureUnit: TemperatureUnit = .celsius {
+    private var temperatureUnit: TemperatureUnit? {
         didSet {
             if temperatureUnit == .celsius {
                 temperature.text = currentWeather.tempCelsius
@@ -56,12 +57,20 @@ class ViewController: UIViewController {
         navigationItem.searchController?.searchBar.isHidden = false
     }
     
-    @IBAction func currentLocationTapped(_ sender: Any) {
-        displayCurrentLocationWeather()
+    @IBAction func temperatureButtonTapped(_ sender: Any) {
+        changeTempUnit()
     }
     
     @objc func temperatureTapped(_ sender: UITapGestureRecognizer) {
-        temperatureUnit = (temperatureUnit == .celsius ? .fahrenheit : .celsius)
+        changeTempUnit()
+    }
+    
+    func changeTempUnit() {
+        temperatureUnit = (temperatureUnit == .fahrenheit ? .celsius : .fahrenheit)
+    }
+    
+    @IBAction func currentLocationTapped(_ sender: Any) {
+        displayCurrentLocationWeather()
     }
     
     func setupTempLabelTap() {
@@ -133,7 +142,12 @@ extension ViewController {
     func update(with weather: Weather) {
         currentWeather = weather
         
-        self.temperature.text = (temperatureUnit == .celsius ? weather.tempCelsius : weather.tempFahrenheit)
+        switch temperatureUnit {
+        case .celsius: self.temperature.text = weather.tempCelsius
+        case .fahrenheit : self.temperature.text = weather.tempFahrenheit
+        default: self.temperature.text = weather.tempLocale
+        }
+        
         self.city.text = weather.location.name
         self.descriptionLabel.text = weather.current.description
         self.background.image = UIImage(named: weather.background)
