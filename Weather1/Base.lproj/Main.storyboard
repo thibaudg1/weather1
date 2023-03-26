@@ -5,6 +5,7 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
         <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="Stack View standard spacing" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -148,25 +149,25 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" restorationIdentifier="cityCell" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="results" id="jea-1F-NCR" customClass="CityCell" customModule="Weather1" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="50" width="393" height="42.333332061767578"/>
+                                <rect key="frame" x="0.0" y="50" width="393" height="60.333332061767578"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="jea-1F-NCR" id="lZy-aZ-DoR">
-                                    <rect key="frame" x="0.0" y="0.0" width="393" height="42.333332061767578"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="393" height="60.333332061767578"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <stackView opaque="NO" contentMode="scaleToFill" spacing="253" translatesAutoresizingMaskIntoConstraints="NO" id="vVV-cp-dvz">
-                                            <rect key="frame" x="29" y="2" width="344.33333333333331" height="38.333333333333336"/>
+                                        <stackView opaque="NO" contentMode="scaleToFill" restorationIdentifier="HStack" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="vVV-cp-dvz" userLabel="HStack">
+                                            <rect key="frame" x="20" y="11" width="353" height="38.333333333333336"/>
                                             <subviews>
-                                                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="top" spacing="1" translatesAutoresizingMaskIntoConstraints="NO" id="6MA-yk-kLp">
-                                                    <rect key="frame" x="0.0" y="0.0" width="30.333333333333332" height="38.333333333333336"/>
+                                                <stackView opaque="NO" contentMode="scaleToFill" restorationIdentifier="VStack" axis="vertical" alignment="top" spacing="1" translatesAutoresizingMaskIntoConstraints="NO" id="6MA-yk-kLp" userLabel="VStack">
+                                                    <rect key="frame" x="0.0" y="0.0" width="284" height="38.333333333333336"/>
                                                     <subviews>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="City" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tGa-yK-aM8">
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="City" textAlignment="natural" lineBreakMode="clip" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tGa-yK-aM8">
                                                             <rect key="frame" x="0.0" y="0.0" width="30.333333333333332" height="21"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                             <nil key="textColor"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="State" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="U3g-R2-OMU">
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="State" textAlignment="natural" lineBreakMode="clip" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="U3g-R2-OMU">
                                                             <rect key="frame" x="0.0" y="22" width="27.666666666666668" height="16.333333333333329"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" constant="16.5" id="2tM-3W-vmx"/>
@@ -178,7 +179,7 @@
                                                     </subviews>
                                                 </stackView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Country" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ieO-JA-q4j">
-                                                    <rect key="frame" x="283.33333333333331" y="0.0" width="61" height="38.333333333333336"/>
+                                                    <rect key="frame" x="292" y="0.0" width="61" height="38.333333333333336"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -188,8 +189,9 @@
                                     </subviews>
                                     <constraints>
                                         <constraint firstItem="vVV-cp-dvz" firstAttribute="centerY" secondItem="lZy-aZ-DoR" secondAttribute="centerY" id="8ZZ-gh-Ude"/>
-                                        <constraint firstItem="vVV-cp-dvz" firstAttribute="top" secondItem="lZy-aZ-DoR" secondAttribute="topMargin" constant="-9" id="Ih8-SK-WtB"/>
-                                        <constraint firstItem="vVV-cp-dvz" firstAttribute="leading" secondItem="lZy-aZ-DoR" secondAttribute="leadingMargin" constant="9" id="Y0s-XL-1w4"/>
+                                        <constraint firstItem="vVV-cp-dvz" firstAttribute="top" secondItem="lZy-aZ-DoR" secondAttribute="topMargin" id="Ih8-SK-WtB"/>
+                                        <constraint firstItem="vVV-cp-dvz" firstAttribute="leading" secondItem="lZy-aZ-DoR" secondAttribute="leadingMargin" id="Y0s-XL-1w4"/>
+                                        <constraint firstAttribute="trailingMargin" secondItem="vVV-cp-dvz" secondAttribute="trailing" id="kFM-zy-mm9"/>
                                     </constraints>
                                 </tableViewCellContentView>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
