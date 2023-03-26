@@ -7,12 +7,21 @@ import Foundation
 import UIKit
 
 struct Weather {
-    let city: String
-    let temperature: Double
-    let description: String
-    let icon: String
-    let group: Int
-    
+    let location: City
+    let current: Weather.Data
+    //let forecast: Weather.Data
+}
+
+extension Weather {
+    struct Data {
+        let temperature: Double
+        let description: String
+        let icon: String
+        let group: Int
+    }
+}
+
+extension Weather {
     enum Icon: String {
         case clearDay = "clear-day"
         case clearNight = "clear-night"
@@ -53,7 +62,7 @@ struct Weather {
     
     var background: String {
         // Photos by authors on Unsplash
-        switch group {
+        switch current.group {
         case 200...299 : return "thunderstorm"
         case 300...399: return "drizzle"
         case 500...599: return "rain"
@@ -67,8 +76,6 @@ struct Weather {
 
 // MARK: - Temperature formatting
 extension Weather {
-    static let `default` = Weather(city: "Rīga", temperature: 300, description: "Clear sky", icon: "01d", group: 800)
-    
     static let temperatureFormatter: MeasurementFormatter = {
         let measurementFormatter = MeasurementFormatter()
         measurementFormatter.unitOptions = .providedUnit
@@ -77,16 +84,25 @@ extension Weather {
     }()
     
     var tempCelsius: String {
-        let measurement = Measurement(value: temperature, unit: UnitTemperature.kelvin)
+        let measurement = Measurement(value: current.temperature, unit: UnitTemperature.kelvin)
         let tempCelsius = measurement.converted(to: .celsius)
         return Weather.temperatureFormatter.string(from: tempCelsius)
     }
     
     var tempFahrenheit: String {
-        let measurement = Measurement(value: temperature, unit: UnitTemperature.kelvin)
+        let measurement = Measurement(value: current.temperature, unit: UnitTemperature.kelvin)
         let tempFahrenheit = measurement.converted(to: .fahrenheit)
         return Weather.temperatureFormatter.string(from: tempFahrenheit)
     }
+}
+
+// MARK: - Default data
+extension Weather {
+    static let rigaCity = City(name: "Rīga", localizedNames: nil, country: "LV", state: nil,
+                               latitude: 56.948889, longitude: 24.106389)
+    static let someWeather = Weather.Data(temperature: 300, description: "Clear sky", icon: "01d", group: 800)
+    
+    static let riga = Weather(location: rigaCity, current: someWeather)
 }
 
 enum TemperatureUnit {

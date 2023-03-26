@@ -19,6 +19,9 @@ protocol APIService {
                              completionHandler: @escaping CityResultsCompletionBlock)
     
     func fetchCityResults(forQuery query: String) -> AnyPublisher<[City], APIServiceError>
+    
+    func loadWeather(for coordinate: Coordinate) -> AnyPublisher<Weather, APIServiceError>
+    func loadWeather(for city: City) -> AnyPublisher<Weather, APIServiceError>
 }
 
 enum APIServiceError: Error {
@@ -45,6 +48,28 @@ final class OpenWeatherAPIService: APIService {
     
     // Replace editor placeholder with your OpenWeatherMap `API key` string
     private let apiKey: String = "fd53c6a1c5478f9d409fd5487979a599"
+    
+    func loadWeather(for coordinate: Coordinate) -> AnyPublisher<Weather, APIServiceError> {
+        let weatherDataPub = loadCurrentWeatherData(for: coordinate)
+        let cityDataPub = loadCityData(for: coordinate)
+        
+        return weatherDataPub
+            .combineLatest(cityDataPub) { currentWeatherData, cityData in
+                Weather(location: cityData, current: currentWeatherData)
+            }
+            .eraseToAnyPublisher()
+    }
+    
+    func loadWeather(for city: City) -> AnyPublisher<Weather, APIServiceError> {
+        let coordinate = (city.latitude, city.longitude)
+        let weatherDataPub = loadCurrentWeatherData(for: coordinate)
+        
+        return weatherDataPub
+            .map { [city] weatherData -> Weather in
+                Weather(location: city, current: weatherData)
+            }
+            .eraseToAnyPublisher()
+    }
     
     func fetchCurrentWeather(coordinate: Coordinate,
                              completionHandler: @escaping WeatherForecastCompletionBlock) {
@@ -177,6 +202,92 @@ final class OpenWeatherAPIService: APIService {
 }
 
 private extension OpenWeatherAPIService {
+    func loadCurrentWeatherData(for coordinate: Coordinate) -> AnyPublisher<Weather.Data, APIServiceError> {
+        guard let url = currentWeatherUrlFor(coordinate) else {
+            return Fail(error: APIServiceError.invalidURL).eraseToAnyPublisher()
+        }
+        
+#if DEBUG
+        print(url)
+#endif
+        
+        let publisher = URLSession.shared.dataTaskPublisher(for: url)
+        return publisher
+            .tryMap { (data, urlResponse) in
+                guard let response = urlResponse as? HTTPURLResponse else {
+                    throw APIServiceError.emptyDataOrError
+                }
+                guard 200 ..< 300 ~= response.statusCode else {
+                    throw APIServiceError.unexpectedStatusCode(response.statusCode)
+                }
+                
+                return data
+            }
+            .decode(type: CurrentWeatherResponse.self, decoder: JSONDecoder())
+            .tryMap({ currentWeather -> Weather.Data in
+                guard let weatherInfo = currentWeather.weather.first else {
+                    throw APIServiceError.emptyDataOrError
+                }
+                
+                return Weather.Data(temperature: currentWeather.main.temperature,
+                                     description: weatherInfo.description,
+                                     icon: weatherInfo.icon,
+                                     group: weatherInfo.id)
+            })
+            .mapError { error -> APIServiceError in
+                switch error {
+                case let apiError as APIServiceError:
+                    return apiError
+                case is Swift.DecodingError:
+                    return APIServiceError.unableToParseDataWith(error: error)
+                default:
+                    return APIServiceError.emptyDataOrError
+                }
+            }
+            .eraseToAnyPublisher()
+    }
+    
+    func loadCityData(for coordinate: Coordinate) -> AnyPublisher<City, APIServiceError> {
+        guard let url = cityResultsUrlFor(coordinate) else {
+            return Fail(error: APIServiceError.invalidURL).eraseToAnyPublisher()
+        }
+        
+#if DEBUG
+        print(url)
+#endif
+        
+        let publisher = URLSession.shared.dataTaskPublisher(for: url)
+        return publisher
+            .tryMap { (data, urlResponse) in
+                guard let response = urlResponse as? HTTPURLResponse else {
+                    throw APIServiceError.emptyDataOrError
+                }
+                guard 200 ..< 300 ~= response.statusCode else {
+                    throw APIServiceError.unexpectedStatusCode(response.statusCode)
+                }
+                
+                return data
+            }
+            .decode(type: [City].self, decoder: JSONDecoder())
+            .tryMap({ cities in
+                guard let city = cities.first else { throw APIServiceError.emptyDataOrError }
+                return city
+            })
+            .mapError { error -> APIServiceError in
+                switch error {
+                case let apiError as APIServiceError:
+                    return apiError
+                case is Swift.DecodingError:
+                    return APIServiceError.unableToParseDataWith(error: error)
+                default:
+                    return APIServiceError.emptyDataOrError
+                }
+            }
+            .eraseToAnyPublisher()
+    }
+}
+
+private extension OpenWeatherAPIService {
     func currentWeatherUrlFor(_ coordinate: Coordinate) -> URL? {
         guard let url = URL(string: "https://api.openweathermap.org/data/2.5/weather") else {
             return nil
@@ -210,6 +321,22 @@ private extension OpenWeatherAPIService {
             .init(name: "q", value: city),
             .init(name: "limit", value: "5"),
             .init(name: "appid", value: apiKey)
+        ]
+        
+        return components?.url
+    }
+    
+    func cityResultsUrlFor(_ coordinate: Coordinate) -> URL? {
+        guard let url = URL(string: "https://api.openweathermap.org/geo/1.0/reverse") else {
+            return nil
+        }
+        
+        var components = URLComponents(url: url, resolvingAgainstBaseURL: true)
+        components?.queryItems = [
+            .init(name: "lat", value: "\(coordinate.latitude)"),
+            .init(name: "lon", value: "\(coordinate.longitude)"),
+            .init(name: "appid", value: apiKey),
+            .init(name: "limit", value: "1")
         ]
         
         return components?.url

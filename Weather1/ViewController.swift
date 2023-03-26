@@ -20,7 +20,7 @@ class ViewController: UIViewController {
     private let weatherAPI = OpenWeatherAPIService()
     private let locationService = DeviceLocationService()
     
-    private var currentWeather: Weather = .default
+    private var currentWeather: Weather = .riga
     private var temperatureUnit: TemperatureUnit = .celsius {
         didSet {
             if temperatureUnit == .celsius {
@@ -32,7 +32,7 @@ class ViewController: UIViewController {
     }
     
     private var query = PassthroughSubject<String, Never>()
-    private var cancellable: AnyCancellable?
+    private var cancellable = Set<AnyCancellable>()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,14 +40,17 @@ class ViewController: UIViewController {
         setupTempLabelTap()
         configureSearchController()
         configureCitySearch()
-        updateDisplayWith(currentWeather)
+        update(with: .riga)
         //displayRigaCurrentWeather()
         //displayCurrentLocationWeather()
     }
     
     @IBAction func searchButton(_ sender: Any) {
+        // Clear previous results and query
         resultsTableViewController.results = nil
+        query.send("")
         
+        // Display search results controller
         navigationItem.searchController?.isActive = true
         navigationItem.searchController?.searchBar.becomeFirstResponder()
         navigationItem.searchController?.searchBar.isHidden = false
@@ -91,28 +94,35 @@ extension ViewController {
         let rigaLon = 24.106389
         let rigaCoordinate = (rigaLat, rigaLon)
         
-        fetchCurrentWeather(coordinate: rigaCoordinate)
+        loadWeather(for: rigaCoordinate)
     }
     
-    func fetchCurrentWeather(coordinate: Coordinate) {
-        weatherAPI.fetchCurrentWeather(coordinate: coordinate) { weatherApiResust in
-            switch weatherApiResust {
-            case .failure(let error):
-                print(error)
-                
-            case .success(let currentWeather):
-                let weather = Weather(city: currentWeather.cityName,
-                                      temperature: currentWeather.main.temperature,
-                                      description: currentWeather.weather.first!.description,
-                                      icon: currentWeather.weather.first!.icon,
-                                      group: currentWeather.weather.first!.id)
-                
-                DispatchQueue.main.async { [weak self] in
-                    self?.updateDisplayWith(weather)
+    func loadWeather(for coordinate: Coordinate) {
+        weatherAPI.loadWeather(for: coordinate)
+            .receive(on: DispatchQueue.main)
+            .sink { completion in
+                switch completion {
+                case .failure(let error): print(error)
+                default: break
                 }
+            } receiveValue: { [weak self] weather in
+                self?.update(with: weather)
             }
-            
-        }
+            .store(in: &cancellable)
+    }
+    
+    func loadWeather(for city: City) {
+        weatherAPI.loadWeather(for: city)
+            .receive(on: DispatchQueue.main)
+            .sink { completion in
+                switch completion {
+                case .failure(let error): print(error)
+                default: break
+                }
+            } receiveValue: { [weak self] weather in
+                self?.update(with: weather)
+            }
+            .store(in: &cancellable)
     }
     
     func displayCurrentLocationWeather() {
@@ -120,20 +130,20 @@ extension ViewController {
         locationService.requestAuthorization()
     }
     
-    func updateDisplayWith(_ weather: Weather) {
+    func update(with weather: Weather) {
         currentWeather = weather
         
         self.temperature.text = (temperatureUnit == .celsius ? weather.tempCelsius : weather.tempFahrenheit)
-        self.city.text = weather.city
-        self.descriptionLabel.text = weather.description
+        self.city.text = weather.location.name
+        self.descriptionLabel.text = weather.current.description
         self.background.image = UIImage(named: weather.background)
         
-        weatherAPI.fecthWeatherIcon(named: weather.icon) { imageResult in
+        weatherAPI.fecthWeatherIcon(named: weather.current.icon) { imageResult in
             var uiImage: UIImage?
             
             switch imageResult {
             case .failure(let error):
-                print("Error when fetching icon \(weather.icon): \(error)")
+                print("Error when fetching icon \(weather.current.icon): \(error)")
                 return
             case .success(let imageData):
                 uiImage = UIImage(data: imageData)
@@ -152,7 +162,7 @@ extension ViewController: LocationServiceDelegate {
         let coordinate: Coordinate = (location.coordinate.latitude,
                                       location.coordinate.longitude)
         
-        fetchCurrentWeather(coordinate: coordinate)
+        loadWeather(for: coordinate)
     }
     
     func locationService(failedWithError error: LocationServiceError) {
@@ -163,17 +173,17 @@ extension ViewController: LocationServiceDelegate {
 // MARK: - UISearchResultsUpdating Delegate
 extension ViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
-        guard let text = searchController.searchBar.text,
-              !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty  else { return }
+        guard let text = searchController.searchBar.text else { return }
         
         print("User typed: >\(text)<")
         query.send(text.trimmingCharacters(in: .whitespacesAndNewlines))
     }
     
     func configureCitySearch() {
-        cancellable = query
+        query
             .debounce(for: 1, scheduler: DispatchQueue.main)
             .removeDuplicates()
+            .filter { !$0.isEmpty }
             .map { [weatherAPI] query in
                 weatherAPI.fetchCityResults(forQuery: query)
                     .asResult()
@@ -194,6 +204,7 @@ extension ViewController: UISearchResultsUpdating {
                 guard !cities.isEmpty else { return }
                 self?.resultsTableViewController.results = cities
             }
+            .store(in: &cancellable)
     }
 }
 
@@ -207,8 +218,7 @@ extension ViewController: UISearchControllerDelegate {
 // MARK: - ResultsTableViewDelegate
 extension ViewController: ResultsTableViewDelegate {
     func didSelect(city: City) {
-        let coordinate = (city.latitude, city.longitude)
-        fetchCurrentWeather(coordinate: coordinate)
+        loadWeather(for: city)
         print("User selected city: \(city)")
         navigationItem.searchController?.isActive = false
     }
