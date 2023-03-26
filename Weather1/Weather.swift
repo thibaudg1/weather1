@@ -61,6 +61,17 @@ extension Weather {
     }
     
     var background: String {
+        switch current.icon.last {
+        case .none: return "sun"
+        case .some(let char):
+            switch char {
+            case "n": return backgroundNight
+            default: return backgroundDay
+            }
+        }
+    }
+    
+    var backgroundDay: String {
         // Photos by authors on Unsplash
         switch current.group {
         case 200...299 : return "thunderstorm"
@@ -71,6 +82,10 @@ extension Weather {
         case 800: return "sun"
         default: return "clouds"
         }
+    }
+    
+    var backgroundNight: String {
+        backgroundDay.appending("Night")
     }
 }
 
