@@ -31,6 +31,12 @@ class ViewController: UIViewController {
             }
         }
     }
+    private var language = "en" {
+        didSet {
+            weatherAPI.language = language
+            resultsTableViewController.language = language
+        }
+    }
     
     private var query = PassthroughSubject<String, Never>()
     private var cancellable = Set<AnyCancellable>()
@@ -41,6 +47,7 @@ class ViewController: UIViewController {
         setupTempLabelTap()
         configureSearchController()
         configureCitySearch()
+        configureLanguage()
         update(with: .riga)
         //displayRigaCurrentWeather()
         //displayCurrentLocationWeather()
@@ -95,6 +102,14 @@ class ViewController: UIViewController {
         navigationItem.searchController = searchController
         definesPresentationContext = true
     }
+    
+    func configureLanguage() {
+        guard let languageSub = Locale.preferredLanguages.first?.prefix(2) else { return }
+        language = String(languageSub)
+#if DEBUG
+print(language)
+#endif
+    }
 }
 
 extension ViewController {
@@ -148,7 +163,7 @@ extension ViewController {
         default: self.temperature.text = weather.tempLocale
         }
         
-        self.city.text = weather.location.name
+        self.city.text = weather.location.localizedName(for: language)
         self.descriptionLabel.text = weather.current.description
         self.background.image = UIImage(named: weather.background)
         

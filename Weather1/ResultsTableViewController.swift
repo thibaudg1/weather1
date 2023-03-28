@@ -12,6 +12,8 @@ protocol ResultsTableViewDelegate: AnyObject {
 class ResultsTableViewController: UITableViewController {
     weak var delegate: ResultsTableViewDelegate?
     
+    var language = "en"
+    
     var results: [City]? {
         didSet {
             tableView.reloadData()
@@ -54,6 +56,8 @@ class ResultsTableViewController: UITableViewController {
            let cell = tableView.dequeueReusableCell(withIdentifier: "results",
                                                     for: indexPath) as? CityCell {
             cell.city = results?[indexPath.row]
+            cell.language = language
+            
             return cell
             
         } else if let cell = tableView.dequeueReusableCell(withIdentifier: "results",

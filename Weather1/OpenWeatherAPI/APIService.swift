@@ -49,6 +49,12 @@ final class OpenWeatherAPIService: APIService {
     // Replace editor placeholder with your OpenWeatherMap `API key` string
     private let apiKey: String = "fd53c6a1c5478f9d409fd5487979a599"
     
+    var language = "en" {
+        didSet {
+            if !OpenWeatherAPIService.availableLanguages.contains(language) { language = "en" }
+        }
+    }
+    
     func loadWeather(for coordinate: Coordinate) -> AnyPublisher<Weather, APIServiceError> {
         let weatherDataPub = loadCurrentWeatherData(for: coordinate)
         let cityDataPub = loadCityData(for: coordinate)
@@ -298,7 +304,7 @@ private extension OpenWeatherAPIService {
             .init(name: "lat", value: "\(coordinate.latitude)"),
             .init(name: "lon", value: "\(coordinate.longitude)"),
             .init(name: "appid", value: apiKey),
-            .init(name: "lang", value: "en")
+            .init(name: "lang", value: language)
         ]
         
         return components?.url
@@ -341,4 +347,58 @@ private extension OpenWeatherAPIService {
         
         return components?.url
     }
+}
+
+extension OpenWeatherAPIService {
+    static let availableLanguages = [
+        "af",
+        "al",
+        "ar",
+        "az",
+        "bg",
+        "ca",
+        "cz",
+        "da",
+        "de",
+        "el",
+        "en",
+        "eu",
+        "fa",
+        "fi",
+        "fr",
+        "gl",
+        "he",
+        "hi",
+        "hr",
+        "hu",
+        "id",
+        "it",
+        "ja",
+        "kr",
+        "la",
+        "lt",
+        "mk",
+        "no",
+        "nl",
+        "pl",
+        "pt",
+        "pt_br",
+        "ro",
+        "ru",
+        "sv",
+        "se",
+        "sk",
+        "sl",
+        "sp",
+        "es",
+        "sr",
+        "th",
+        "tr",
+        "ua",
+        "uk",
+        "vi",
+        "zh_cn",
+        "zh_tw",
+        "zu"
+    ]
 }
