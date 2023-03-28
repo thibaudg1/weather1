@@ -39,7 +39,8 @@ class ViewController: UIViewController {
     }
     
     private var query = PassthroughSubject<String, Never>()
-    private var cancellable = Set<AnyCancellable>()
+    private var citySearchCancellable: AnyCancellable?
+    private var weatherCancellable: AnyCancellable?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -51,6 +52,11 @@ class ViewController: UIViewController {
         update(with: .riga)
         //displayRigaCurrentWeather()
         //displayCurrentLocationWeather()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        configureFirstWeather()
     }
     
     @IBAction func searchButton(_ sender: Any) {
@@ -110,6 +116,27 @@ class ViewController: UIViewController {
 print(language)
 #endif
     }
+    
+    func configureFirstWeather() {
+        // Load (Riga, LV) weather by default when launching the app:
+        displayRigaCurrentWeather()
+        
+        // Then try to load weather for current location:
+        if locationService.isAuthorized() {
+            displayCurrentLocationWeather()
+        } else {
+            // ask for access to user's location:
+            let message = "What location would you like to show weather for?"
+            let ac = UIAlertController(title: "Choose your location", message: message, preferredStyle: .alert)
+            
+            ac.addAction(UIAlertAction(title: "My current location", style: .default, handler: displayCurrentLocationWeather))
+            
+            // Fallback to default location's weather if user doesn't want to use her location:
+            ac.addAction(UIAlertAction(title: "Riga, LV", style: .default))
+            
+            present(ac, animated: true)
+        }
+    }
 }
 
 extension ViewController {
@@ -122,7 +149,9 @@ extension ViewController {
     }
     
     func loadWeather(for coordinate: Coordinate) {
-        weatherAPI.loadWeather(for: coordinate)
+        cancelWeatherRequest()
+        
+        weatherCancellable = weatherAPI.loadWeather(for: coordinate)
             .receive(on: DispatchQueue.main)
             .sink { completion in
                 switch completion {
@@ -132,11 +161,12 @@ extension ViewController {
             } receiveValue: { [weak self] weather in
                 self?.update(with: weather)
             }
-            .store(in: &cancellable)
     }
     
     func loadWeather(for city: City) {
-        weatherAPI.loadWeather(for: city)
+        cancelWeatherRequest()
+        
+        weatherCancellable = weatherAPI.loadWeather(for: city)
             .receive(on: DispatchQueue.main)
             .sink { completion in
                 switch completion {
@@ -146,10 +176,14 @@ extension ViewController {
             } receiveValue: { [weak self] weather in
                 self?.update(with: weather)
             }
-            .store(in: &cancellable)
     }
     
-    func displayCurrentLocationWeather() {
+    private func cancelWeatherRequest() {
+        weatherCancellable?.cancel()
+        weatherCancellable = nil
+    }
+    
+    func displayCurrentLocationWeather(_ action: UIAlertAction? = nil) {
         locationService.delegate = self
         locationService.requestAuthorization()
     }
@@ -209,7 +243,7 @@ extension ViewController: UISearchResultsUpdating {
     }
     
     func configureCitySearch() {
-        query
+        citySearchCancellable = query
             .debounce(for: 1, scheduler: DispatchQueue.main)
             .removeDuplicates()
             .filter { !$0.isEmpty }
@@ -233,7 +267,6 @@ extension ViewController: UISearchResultsUpdating {
                 guard !cities.isEmpty else { return }
                 self?.resultsTableViewController.results = cities
             }
-            .store(in: &cancellable)
     }
 }
 

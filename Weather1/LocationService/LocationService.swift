@@ -30,6 +30,7 @@ protocol LocationService: AnyObject {
     var delegate: LocationServiceDelegate? { get set }
     
     func requestAuthorization()
+    func isAuthorized() -> Bool
 }
 
 protocol LocationServiceDelegate: AnyObject {
@@ -45,6 +46,16 @@ final class DeviceLocationService: NSObject, LocationService, CLLocationManagerD
         super.init()
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyKilometer
+    }
+    
+    func isAuthorized() -> Bool {
+        let status = locationManager.authorizationStatus
+        switch status {
+        case .authorizedAlways, .authorizedWhenInUse, .authorized:
+            return true
+        default:
+            return false
+        }
     }
     
     func requestAuthorization() {
