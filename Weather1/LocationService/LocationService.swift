@@ -66,7 +66,7 @@ final class DeviceLocationService: NSObject, LocationService, CLLocationManagerD
         case .restricted, .denied:
             delegate?.locationService(failedWithError: .invalidAuthorizationStatus(status))
         case .authorizedAlways, .authorizedWhenInUse, .authorized:
-            locationManager.startUpdatingLocation()
+            locationManager.requestLocation()
         @unknown default:
             delegate?.locationService(failedWithError: .invalidAuthorizationStatus(status))
         }
@@ -77,7 +77,7 @@ final class DeviceLocationService: NSObject, LocationService, CLLocationManagerD
         let status = manager.authorizationStatus
         switch status {
         case .authorizedWhenInUse, .authorizedAlways, .authorized:
-            manager.startUpdatingLocation()
+            locationManager.requestLocation()
         default:
             delegate?.locationService(failedWithError: .invalidAuthorizationStatus(status))
         }
@@ -85,8 +85,6 @@ final class DeviceLocationService: NSObject, LocationService, CLLocationManagerD
     
     func locationManager(_ manager: CLLocationManager,
                          didUpdateLocations locations: [CLLocation]) {
-        manager.stopUpdatingLocation()
-        
         guard let location = locations.last else {
             delegate?.locationService(failedWithError: .locationUpdateError)
             return
