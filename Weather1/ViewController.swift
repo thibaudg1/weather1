@@ -38,6 +38,7 @@ class ViewController: UIViewController {
         }
     }
     
+    private var lastQuery = ""
     private var query = PassthroughSubject<String, Never>()
     private var citySearchCancellable: AnyCancellable?
     private var weatherCancellable: AnyCancellable?
@@ -59,15 +60,12 @@ class ViewController: UIViewController {
         configureFirstWeather()
     }
     
-    @IBAction func searchButton(_ sender: Any) {
-        // Clear previous results and query
-        resultsTableViewController.results = nil
-        query.send("")
-        
+    @IBAction func searchButton(_ sender: Any) {       
         // Display search results controller
         navigationItem.searchController?.isActive = true
         navigationItem.searchController?.searchBar.becomeFirstResponder()
         navigationItem.searchController?.searchBar.isHidden = false
+        navigationItem.searchController?.searchBar.text = lastQuery
     }
     
     @IBAction func temperatureButtonTapped(_ sender: Any) {
@@ -237,9 +235,13 @@ extension ViewController: LocationServiceDelegate {
 extension ViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         guard let text = searchController.searchBar.text else { return }
-        
         print("User typed: >\(text)<")
-        query.send(text.trimmingCharacters(in: .whitespacesAndNewlines))
+        
+        let query = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !query.isEmpty {
+            self.lastQuery = query
+            self.query.send(lastQuery)
+        }
     }
     
     func configureCitySearch() {
