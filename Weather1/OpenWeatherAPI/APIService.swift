@@ -46,8 +46,14 @@ enum APIServiceError: Error {
 
 final class OpenWeatherAPIService: APIService {
     
-    // Replace editor placeholder with your OpenWeatherMap `API key` string
-    private let apiKey: String = "fd53c6a1c5478f9d409fd5487979a599"
+    // Read first Config.README for setting up an API key
+    private let apiKey: String = {
+        let object = Bundle.main.object(forInfoDictionaryKey: "OPENWEATHER_API_KEY")
+        guard let value = object as? String else {
+            fatalError("The OPENWEATHER_API_KEY key is missing. Read the Config.README file")
+        }
+        return value
+    }()
     
     var language = "en" {
         didSet {

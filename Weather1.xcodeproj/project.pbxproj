@@ -21,6 +21,7 @@
 		6CAA53BA29CC556E00F625E4 /* CityCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CAA53B929CC556E00F625E4 /* CityCell.swift */; };
 		6CAA53BC29CC55AE00F625E4 /* City.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CAA53BB29CC55AE00F625E4 /* City.swift */; };
 		6CAE9B6529CE1D6F008D96E5 /* ResultPublisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CAE9B6429CE1D6F008D96E5 /* ResultPublisher.swift */; };
+		6CE406C12A659E9500722138 /* Config.README.md in Resources */ = {isa = PBXBuildFile; fileRef = 6CE406C02A659E9500722138 /* Config.README.md */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,6 +42,10 @@
 		6CAA53B929CC556E00F625E4 /* CityCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CityCell.swift; sourceTree = "<group>"; };
 		6CAA53BB29CC55AE00F625E4 /* City.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = City.swift; sourceTree = "<group>"; };
 		6CAE9B6429CE1D6F008D96E5 /* ResultPublisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultPublisher.swift; sourceTree = "<group>"; };
+		6CE406BC2A65975800722138 /* Global.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Global.xcconfig; sourceTree = "<group>"; };
+		6CE406BD2A6597C200722138 /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
+		6CE406BE2A65980300722138 /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
+		6CE406C02A659E9500722138 /* Config.README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Config.README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,6 +107,7 @@
 				6C258F6E29CAF8FF002ADBC5 /* Assets.xcassets */,
 				6C258F7029CAF8FF002ADBC5 /* LaunchScreen.storyboard */,
 				6C258F7329CAF8FF002ADBC5 /* Info.plist */,
+				6CE406BF2A65982500722138 /* Configs */,
 				6CAE9B6329CE1D42008D96E5 /* Extensions */,
 				6C04DE8A29CB33B700BB6A95 /* LocationService */,
 				6C04DE8329CB069800BB6A95 /* OpenWeatherAPI */,
@@ -115,6 +121,17 @@
 				6CAE9B6429CE1D6F008D96E5 /* ResultPublisher.swift */,
 			);
 			path = Extensions;
+			sourceTree = "<group>";
+		};
+		6CE406BF2A65982500722138 /* Configs */ = {
+			isa = PBXGroup;
+			children = (
+				6CE406BC2A65975800722138 /* Global.xcconfig */,
+				6CE406BD2A6597C200722138 /* Debug.xcconfig */,
+				6CE406BE2A65980300722138 /* Release.xcconfig */,
+				6CE406C02A659E9500722138 /* Config.README.md */,
+			);
+			path = Configs;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -176,6 +193,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6C258F7229CAF8FF002ADBC5 /* LaunchScreen.storyboard in Resources */,
+				6CE406C12A659E9500722138 /* Config.README.md in Resources */,
 				6C258F6F29CAF8FF002ADBC5 /* Assets.xcassets in Resources */,
 				6C258F6D29CAF8FE002ADBC5 /* Main.storyboard in Resources */,
 			);
@@ -340,6 +358,7 @@
 		};
 		6C258F7729CAF8FF002ADBC5 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6CE406BD2A6597C200722138 /* Debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -368,6 +387,7 @@
 		};
 		6C258F7829CAF8FF002ADBC5 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6CE406BE2A65980300722138 /* Release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
